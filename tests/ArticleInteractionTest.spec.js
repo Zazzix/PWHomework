@@ -31,7 +31,7 @@ test('User can register with a valid data', async ({ page }) => {
     await expect(yourfeed.getProfileName()).toContainText(user.username);
 });
 
-test.only('User can write an article', async ({ page }) => {
+test('User can write an article', async ({ page }) => {
     const main = new MainPage(page);
     const register = new RegisterPage(page);
     const newarticle = new NewArticlePage(page);
@@ -44,4 +44,21 @@ test.only('User can write an article', async ({ page }) => {
     await newarticle.createArticle();
     await newarticle.publishArticle(article);
     await expect(postedarticle.getArticleTitle()).toContainText(article.title);
+});
+
+test.only('User can comment own article', async ({ page }) => {
+    const main = new MainPage(page);
+    const register = new RegisterPage(page);
+    const newarticle = new NewArticlePage(page);
+    const postedarticle = new PostedArticlePage(page);
+
+    const newComment = faker.lorem.sentence();
+
+    await main.open();
+    await main.gotoRegister();
+    await register.signup(user);
+    await newarticle.createArticle();
+    await newarticle.publishArticle(article);
+    await postedarticle.leaveComment(newComment);
+    await expect(page.getByText(newComment)).toBeVisible();
 });
