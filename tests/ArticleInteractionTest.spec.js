@@ -5,6 +5,7 @@ import { RegisterPage } from '../src/pages/register.page';
 import { YourFeedPage } from '../src/pages/yourfeed.page';
 import { NewArticlePage } from '../src/pages/newarticle.page';
 import { PostedArticlePage } from '../src/pages/postedarticle.page';
+import { EditArticlePage } from '../src/pages/editarticle.page';
 
 const user = {
     email: faker.internet.email(),
@@ -63,7 +64,7 @@ test('User can comment own article', async ({ page }) => {
     await expect(page.getByText(newComment)).toBeVisible();
 });
 
-test.only('User can delete own comment', async ({ page }) => {
+test('User can delete own comment', async ({ page }) => {
     const main = new MainPage(page);
     const register = new RegisterPage(page);
     const newarticle = new NewArticlePage(page);
@@ -82,4 +83,25 @@ test.only('User can delete own comment', async ({ page }) => {
     await expect(page.getByText(newComment)).toBeVisible();
     await postedarticle.deleteComment();
     await expect(page.getByText(newComment)).not.toBeVisible();
+});
+
+test.only('User can edit article', async ({ page }) => {
+    const main = new MainPage(page);
+    const register = new RegisterPage(page);
+    const newarticle = new NewArticlePage(page);
+    const postedarticle = new PostedArticlePage(page);
+    const editarticle = new EditArticlePage(page)
+
+    const newTitle = faker.lorem.sentence(2);
+
+
+    await main.open();
+    await main.gotoRegister();
+    await register.signup(user);
+    await newarticle.createArticle();
+    await newarticle.publishArticle(article);
+    await expect(postedarticle.getArticleTitle()).toContainText(article.title);
+    await postedarticle.editArticle();
+    await editarticle.updateArticle(newTitle);
+    await expect(postedarticle.getArticleTitle()).toContainText(newTitle);
 });

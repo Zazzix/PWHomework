@@ -6,6 +6,7 @@ export class PostedArticlePage {
         this.postCommentButton = page.getByRole("button", { name: "Post Comment" });
         this.commentText = page.getByRole("paragraph");
         this.deleteCommentButton = page.locator(".card-footer").getByRole("button").locator("i");
+        this.editArticleButton = page.locator(".banner").getByRole("button", { name: "Edit Article" })
     }
     getArticleTitle() {
         return this.articleHeader;
@@ -22,6 +23,9 @@ export class PostedArticlePage {
         });
         await this.deleteCommentButton.click();
 
+    }
+    async editArticle() {
+        await this.editArticleButton.click();
     }
 }
 
