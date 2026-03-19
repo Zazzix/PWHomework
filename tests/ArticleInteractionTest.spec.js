@@ -46,7 +46,7 @@ test('User can write an article', async ({ page }) => {
     await expect(postedarticle.getArticleTitle()).toContainText(article.title);
 });
 
-test.only('User can comment own article', async ({ page }) => {
+test('User can comment own article', async ({ page }) => {
     const main = new MainPage(page);
     const register = new RegisterPage(page);
     const newarticle = new NewArticlePage(page);
@@ -61,4 +61,25 @@ test.only('User can comment own article', async ({ page }) => {
     await newarticle.publishArticle(article);
     await postedarticle.leaveComment(newComment);
     await expect(page.getByText(newComment)).toBeVisible();
+});
+
+test.only('User can delete own comment', async ({ page }) => {
+    const main = new MainPage(page);
+    const register = new RegisterPage(page);
+    const newarticle = new NewArticlePage(page);
+    const postedarticle = new PostedArticlePage(page);
+
+    const newComment = faker.lorem.sentence();
+
+
+    await main.open();
+    await main.gotoRegister();
+    await register.signup(user);
+    await newarticle.createArticle();
+    await newarticle.publishArticle(article);
+    await expect(page.getByText(newComment)).not.toBeVisible();
+    await postedarticle.leaveComment(newComment);
+    await expect(page.getByText(newComment)).toBeVisible();
+    await postedarticle.deleteComment();
+    await expect(page.getByText(newComment)).not.toBeVisible();
 });
