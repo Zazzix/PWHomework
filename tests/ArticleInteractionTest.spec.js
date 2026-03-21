@@ -6,6 +6,7 @@ import { YourFeedPage } from '../src/pages/yourfeed.page';
 import { NewArticlePage } from '../src/pages/newarticle.page';
 import { PostedArticlePage } from '../src/pages/postedarticle.page';
 import { EditArticlePage } from '../src/pages/editarticle.page';
+import { ProfilePage } from '../src/pages/profile.page';
 
 const user = {
     email: faker.internet.email(),
@@ -85,7 +86,7 @@ test('User can delete own comment', async ({ page }) => {
     await expect(page.getByText(newComment)).not.toBeVisible();
 });
 
-test.only('User can edit article', async ({ page }) => {
+test('User can edit article', async ({ page }) => {
     const main = new MainPage(page);
     const register = new RegisterPage(page);
     const newarticle = new NewArticlePage(page);
@@ -104,4 +105,25 @@ test.only('User can edit article', async ({ page }) => {
     await postedarticle.editArticle();
     await editarticle.updateArticle(newTitle);
     await expect(postedarticle.getArticleTitle()).toContainText(newTitle);
+});
+
+
+test.only('User can delete an article', async ({ page }) => {
+    const main = new MainPage(page);
+    const register = new RegisterPage(page);
+    const newarticle = new NewArticlePage(page);
+    const postedarticle = new PostedArticlePage(page);
+    const profilePage = new ProfilePage(page);
+
+
+    await main.open();
+    await main.gotoRegister();
+    await register.signup(user);
+    await newarticle.createArticle();
+    await newarticle.publishArticle(article);
+    await expect(postedarticle.getArticleTitle()).toContainText(article.title);
+    await postedarticle.deleteArticle();
+    await expect(page.getByText("Articles not available.")).toBeVisible();
+    await profilePage.openProfile();
+    await expect(page.getByText(`${user.username} doesn't have articles.`)).toBeVisible();
 });

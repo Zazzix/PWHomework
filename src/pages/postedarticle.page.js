@@ -7,6 +7,7 @@ export class PostedArticlePage {
         this.commentText = page.getByRole("paragraph");
         this.deleteCommentButton = page.locator(".card-footer").getByRole("button").locator("i");
         this.editArticleButton = page.locator(".banner").getByRole("button", { name: "Edit Article" })
+        this.deleteArticleButton = page.locator(".banner").getByRole("button", { name: "Delete Article" })
     }
     getArticleTitle() {
         return this.articleHeader;
@@ -26,6 +27,13 @@ export class PostedArticlePage {
     }
     async editArticle() {
         await this.editArticleButton.click();
+    }
+    async deleteArticle() {
+        this.page.once('dialog', async (dialog) => {
+
+            await dialog.accept()
+        });
+        await this.deleteArticleButton.click();
     }
 }
 

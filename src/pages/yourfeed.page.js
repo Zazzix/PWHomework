@@ -8,3 +8,4 @@ export class YourFeedPage {
         return this.profileName;
     }
 }
+
