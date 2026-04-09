@@ -21,11 +21,3 @@ export class UserBuilder {
         return result;
     }
 }
-
-/*
-const user = {
-    email: faker.internet.email(),
-    password: faker.internet.password(),
-    username: faker.person.fullName(),
-}
-*/

@@ -1,5 +1,4 @@
 import { test, expect } from '@playwright/test';
-import { faker } from '@faker-js/faker';
 import { MainPage } from '../src/pages/main.page';
 import { RegisterPage } from '../src/pages/register.page';
 import { YourFeedPage } from '../src/pages/yourfeed.page';
@@ -7,22 +6,8 @@ import { NewArticlePage } from '../src/pages/newarticle.page';
 import { PostedArticlePage } from '../src/pages/postedarticle.page';
 import { EditArticlePage } from '../src/pages/editarticle.page';
 import { ProfilePage } from '../src/pages/profile.page';
-import { UserBuilder } from '../src/helpers/builders/index';
+import { UserBuilder, ArticleBuilder } from '../src/helpers/builders/index';
 
-/*
-const user = {
-    email: faker.internet.email(),
-    password: faker.internet.password(),
-    username: faker.person.fullName(),
-}
-*/
-
-const article = {
-    title: faker.lorem.sentence(2),
-    description: faker.lorem.sentence(4),
-    body: faker.lorem.sentence(),
-    tag: faker.lorem.word(),
-}
 
 test('User can register with a valid data', async ({ page }) => {
     const main = new MainPage(page);
@@ -42,6 +27,7 @@ test('User can write an article', async ({ page }) => {
     const newarticle = new NewArticlePage(page);
     const postedarticle = new PostedArticlePage(page);
     const user = new UserBuilder().withUsername().withEmail().withPassword().build();
+    const article = new ArticleBuilder().withTitle().withDescription().withBody().withTag().build();
 
 
     await main.open();
@@ -58,16 +44,17 @@ test('User can comment own article', async ({ page }) => {
     const newarticle = new NewArticlePage(page);
     const postedarticle = new PostedArticlePage(page);
     const user = new UserBuilder().withUsername().withEmail().withPassword().build();
+    const article = new ArticleBuilder().withTitle().withDescription().withBody().withTag().build();
 
-    const newComment = faker.lorem.sentence();
+    const newComment = new ArticleBuilder().withComment().build();
 
     await main.open();
     await main.gotoRegister();
     await register.signup(user);
     await newarticle.createArticle();
     await newarticle.publishArticle(article);
-    await postedarticle.leaveComment(newComment);
-    await expect(postedarticle.getCommentText()).toContainText(newComment);
+    await postedarticle.leaveComment(newComment.comment);
+    await expect(postedarticle.getCommentText()).toContainText(newComment.comment);
 });
 
 test('User can delete own comment', async ({ page }) => {
@@ -76,9 +63,9 @@ test('User can delete own comment', async ({ page }) => {
     const newarticle = new NewArticlePage(page);
     const postedarticle = new PostedArticlePage(page);
     const user = new UserBuilder().withUsername().withEmail().withPassword().build();
+    const article = new ArticleBuilder().withTitle().withDescription().withBody().withTag().build();
 
-    const newComment = faker.lorem.sentence();
-
+    const newComment = new ArticleBuilder().withComment().build();
 
     await main.open();
     await main.gotoRegister();
@@ -86,7 +73,7 @@ test('User can delete own comment', async ({ page }) => {
     await newarticle.createArticle();
     await newarticle.publishArticle(article);
     await expect(postedarticle.getCommentText()).not.toBeVisible();
-    await postedarticle.leaveComment(newComment);
+    await postedarticle.leaveComment(newComment.comment);
     await expect(postedarticle.getCommentText()).toBeVisible();
     await postedarticle.deleteComment();
     await expect(postedarticle.getCommentText()).not.toBeVisible();
@@ -99,8 +86,9 @@ test('User can edit article', async ({ page }) => {
     const postedarticle = new PostedArticlePage(page);
     const editarticle = new EditArticlePage(page)
     const user = new UserBuilder().withUsername().withEmail().withPassword().build();
+    const article = new ArticleBuilder().withTitle().withDescription().withBody().withTag().build();
 
-    const newTitle = faker.lorem.sentence(2);
+    const newTitle = new ArticleBuilder().withTitle().build();
 
 
     await main.open();
@@ -110,8 +98,8 @@ test('User can edit article', async ({ page }) => {
     await newarticle.publishArticle(article);
     await expect(postedarticle.getArticleTitle()).toContainText(article.title);
     await postedarticle.editArticle();
-    await editarticle.updateArticle(newTitle);
-    await expect(postedarticle.getArticleTitle()).toContainText(newTitle);
+    await editarticle.updateArticle(newTitle.title);
+    await expect(postedarticle.getArticleTitle()).toContainText(newTitle.title);
 });
 
 
@@ -123,6 +111,7 @@ test('User can delete an article', async ({ page }) => {
     const profilePage = new ProfilePage(page);
     const yourfeed = new YourFeedPage(page);
     const user = new UserBuilder().withUsername().withEmail().withPassword().build();
+    const article = new ArticleBuilder().withTitle().withDescription().withBody().withTag().build();
 
 
     await main.open();
@@ -132,7 +121,7 @@ test('User can delete an article', async ({ page }) => {
     await newarticle.publishArticle(article);
     await expect(postedarticle.getArticleTitle()).toContainText(article.title);
     await postedarticle.deleteArticle();
-    await expect(yourfeed.getArticleFeed()).toContainText("Articles not available."); //TODO 
+    await expect(yourfeed.getArticleFeed()).toContainText("Articles not available.");
     await profilePage.openProfile();
-    await expect(profilePage.getArticlesList()).toContainText(`${user.username} doesn't have articles.`); //TODO 
+    await expect(profilePage.getArticlesList()).toContainText(`${user.username} doesn't have articles.`);
 });
