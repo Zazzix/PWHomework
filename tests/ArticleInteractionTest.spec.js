@@ -7,12 +7,15 @@ import { NewArticlePage } from '../src/pages/newarticle.page';
 import { PostedArticlePage } from '../src/pages/postedarticle.page';
 import { EditArticlePage } from '../src/pages/editarticle.page';
 import { ProfilePage } from '../src/pages/profile.page';
+import { UserBuilder } from '../src/helpers/builders/index';
 
+/*
 const user = {
     email: faker.internet.email(),
     password: faker.internet.password(),
     username: faker.person.fullName(),
 }
+*/
 
 const article = {
     title: faker.lorem.sentence(2),
@@ -25,7 +28,7 @@ test('User can register with a valid data', async ({ page }) => {
     const main = new MainPage(page);
     const register = new RegisterPage(page);
     const yourfeed = new YourFeedPage(page);
-
+    const user = new UserBuilder().withUsername().withEmail().withPassword().build();
 
     await main.open();
     await main.gotoRegister();
@@ -38,6 +41,7 @@ test('User can write an article', async ({ page }) => {
     const register = new RegisterPage(page);
     const newarticle = new NewArticlePage(page);
     const postedarticle = new PostedArticlePage(page);
+    const user = new UserBuilder().withUsername().withEmail().withPassword().build();
 
 
     await main.open();
@@ -53,6 +57,7 @@ test('User can comment own article', async ({ page }) => {
     const register = new RegisterPage(page);
     const newarticle = new NewArticlePage(page);
     const postedarticle = new PostedArticlePage(page);
+    const user = new UserBuilder().withUsername().withEmail().withPassword().build();
 
     const newComment = faker.lorem.sentence();
 
@@ -70,6 +75,7 @@ test('User can delete own comment', async ({ page }) => {
     const register = new RegisterPage(page);
     const newarticle = new NewArticlePage(page);
     const postedarticle = new PostedArticlePage(page);
+    const user = new UserBuilder().withUsername().withEmail().withPassword().build();
 
     const newComment = faker.lorem.sentence();
 
@@ -92,6 +98,7 @@ test('User can edit article', async ({ page }) => {
     const newarticle = new NewArticlePage(page);
     const postedarticle = new PostedArticlePage(page);
     const editarticle = new EditArticlePage(page)
+    const user = new UserBuilder().withUsername().withEmail().withPassword().build();
 
     const newTitle = faker.lorem.sentence(2);
 
@@ -115,6 +122,7 @@ test('User can delete an article', async ({ page }) => {
     const postedarticle = new PostedArticlePage(page);
     const profilePage = new ProfilePage(page);
     const yourfeed = new YourFeedPage(page);
+    const user = new UserBuilder().withUsername().withEmail().withPassword().build();
 
 
     await main.open();
